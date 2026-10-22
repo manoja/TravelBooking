@@ -156,7 +156,7 @@ import { CommonModule } from '@angular/common';
               <span>{{ res.total_amount | money }}</span>
             </div>
             <p class="cancellation">
-              Free cancellation until 3:00 PM on July 15, 2022.
+              Free cancellation until 3:00 PM on {{ getCancellationDate(res.check_in) }}.
               <a href="#">More info</a>
             </p>
           </section>
@@ -420,6 +420,17 @@ export class PaymentComponent {
 
   protected formatDate(dateStr: string): string {
     const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  }
+
+  protected getCancellationDate(checkInDate: string): string {
+    const date = new Date(checkInDate);
+    // Subtract 1 day from check-in date for cancellation deadline
+    date.setDate(date.getDate() - 1);
     return date.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',

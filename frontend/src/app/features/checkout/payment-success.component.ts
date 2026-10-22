@@ -107,7 +107,7 @@ import { CommonModule } from '@angular/common';
             <li>A confirmation email has been sent to your registered email address.</li>
             <li>Keep your reservation code handy for check-in.</li>
             <li>For any changes, contact the hotel directly or manage your booking in your account.</li>
-            <li>You can cancel free of charge until one day before your check-in date.</li>
+            <li>You can cancel free of charge until {{ getCancellationDate(res.check_in) }}.</li>
           </ul>
         </section>
 
@@ -382,6 +382,17 @@ export class PaymentSuccessComponent {
 
   protected formatDate(dateStr: string): string {
     const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  }
+
+  protected getCancellationDate(checkInDate: string): string {
+    const date = new Date(checkInDate);
+    // Subtract 1 day from check-in date for cancellation deadline
+    date.setDate(date.getDate() - 1);
     return date.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
