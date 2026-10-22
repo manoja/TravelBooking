@@ -2,7 +2,9 @@
 export const environment = {
   production: false,
   apiUrl: 'https://travelbooking-g84t.onrender.com/api/v1',
-  auth0Domain: 'YOUR_AUTH0_DOMAIN',
-  auth0ClientId: 'YOUR_SPA_CLIENT_ID',
-  auth0Audience: 'https://travel-booking-api'
+  auth0: {
+    domain: 'dev-0pa513dityyo2bqx.us.auth0.com',
+    clientId: 'ws7vjQwyGhNJdKayhyGLzbxJsB6Kg7SW',
+    audience: 'https://travel-booking-api'
+  }
 };
