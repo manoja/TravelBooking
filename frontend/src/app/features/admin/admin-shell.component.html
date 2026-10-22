@@ -1,0 +1,72 @@
+<div class="adm" [class.adm--nav-open]="navOpen()">
+  <a class="skip-link" href="#adm-main">Skip to content</a>
+
+  <aside class="adm-side" id="adm-nav" aria-label="Admin navigation">
+    <a class="adm-brand" routerLink="/admin/dashboard">
+      <span class="adm-logo" aria-hidden="true">T</span>
+      <span>
+        <strong>Travel Booking</strong>
+        <small>Hotel management</small>
+      </span>
+    </a>
+
+    <nav>
+      <ul>
+        @for (item of nav; track item.path) {
+          <li>
+            <a [routerLink]="['/admin', item.path]" routerLinkActive="active" ariaCurrentWhenActive="page"
+              (click)="closeNav()">
+              <span class="glyph" aria-hidden="true">{{ item.glyph }}</span>
+              {{ item.label }}
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+
+    <a class="adm-back" routerLink="/destinations">← Back to website</a>
+  </aside>
+
+  @if (navOpen()) {
+    <div class="adm-scrim" (click)="closeNav()" aria-hidden="true"></div>
+  }
+
+  <div class="adm-body">
+    <header class="adm-top">
+      <button type="button" class="icon-btn adm-burger" aria-controls="adm-nav"
+        [attr.aria-expanded]="navOpen()" aria-label="Toggle navigation" (click)="toggleNav()">☰</button>
+
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a routerLink="/admin/dashboard">Admin</a></li>
+          <li aria-current="page">{{ section() }}</li>
+        </ol>
+      </nav>
+
+      <div class="adm-top-right">
+        <a class="icon-btn bell" routerLink="/admin/reservations"
+          [attr.aria-label]="stats.pendingReservations() + ' pending reservations'">
+          <span aria-hidden="true">🔔</span>
+          @if (stats.pendingReservations() > 0) {
+            <span class="bell-count">{{ stats.pendingReservations() }}</span>
+          }
+        </a>
+        <div class="profile">
+          <span class="avatar" aria-hidden="true">{{ initials() }}</span>
+          <span class="profile-text">
+            <strong>{{ displayName() }}</strong>
+            <small>Administrator</small>
+          </span>
+        </div>
+        <button type="button" class="btn btn--ghost" (click)="auth.logout()">Log out</button>
+      </div>
+    </header>
+
+    <main id="adm-main" class="adm-main" tabindex="-1">
+      <router-outlet />
+    </main>
+  </div>
+
+  <app-confirm-dialog />
+  <app-toast-host />
+</div>

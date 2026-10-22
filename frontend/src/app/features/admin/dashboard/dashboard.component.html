@@ -1,0 +1,59 @@
+<div class="page-head">
+  <div>
+    <h1>{{ greeting() }}</h1>
+    <p>Here is what is happening across your properties.</p>
+  </div>
+  <a class="btn" routerLink="/admin/destinations">Manage destinations</a>
+</div>
+
+@if (stats.error(); as err) {
+  <div class="card state state--error" role="alert">
+    <h3>Could not load the dashboard</h3>
+    <p>{{ err }}</p>
+    <button type="button" (click)="retry()">Try again</button>
+  </div>
+} @else if (stats.dashboard(); as d) {
+  <section class="kpis" aria-label="Key figures">
+    <article class="card kpi">
+      <span>Total revenue</span>
+      <strong>{{ d.revenue | money }}</strong>
+      <small>{{ d.refunded_total | money }} refunded</small>
+    </article>
+    <article class="card kpi">
+      <span>Hotels</span>
+      <strong>{{ d.hotels_total }}</strong>
+    </article>
+    <article class="card kpi">
+      <span>Active rooms</span>
+      <strong>{{ d.rooms_active }}</strong>
+      <small>of {{ d.rooms_total }} rooms</small>
+    </article>
+    <article class="card kpi">
+      <span>Destinations</span>
+      <strong>{{ d.destinations_total }}</strong>
+    </article>
+  </section>
+
+  <section class="card panel" aria-labelledby="res-heading">
+    <h2 id="res-heading">Reservations by status</h2>
+    @if (statusCounts().length === 0) {
+      <p class="note">No reservations yet.</p>
+    } @else {
+      <div class="status-grid">
+        @for (s of statusCounts(); track s.status) {
+          <div>
+            <span class="badge" [class]="'badge badge--' + s.tone">{{ s.status }}</span>
+            <strong>{{ s.count }}</strong>
+          </div>
+        }
+      </div>
+    }
+    <p class="note">{{ d.revenue_definition }}</p>
+  </section>
+} @else {
+  <section class="kpis" aria-busy="true" aria-label="Loading key figures">
+    @for (i of [1, 2, 3, 4]; track i) {
+      <div class="card kpi"><div class="skeleton" style="margin: 0"></div></div>
+    }
+  </section>
+}

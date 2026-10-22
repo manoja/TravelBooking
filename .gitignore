@@ -1,0 +1,52 @@
+
+# Node / Angular
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+.npm/
+
+# Python / FastAPI
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+backend/.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+frontend/src/environments/environment.prod.ts
+
+# IDE and operating system
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+tmp/
+temp/
+
+# Build artifacts and generated reports
+dist/
+.angular/
+coverage/
+htmlcov/
+test-results/
+*.tsbuildinfo
+*.egg-info/
+build/
+.cache/
+
+# Local-only env variants (keep .env.example)
+.env.local
+.env.*.local
+.history/

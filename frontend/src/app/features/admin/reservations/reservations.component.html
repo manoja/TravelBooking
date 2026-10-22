@@ -1,0 +1,68 @@
+<div class="page-head">
+  <div>
+    <h1>Reservations</h1>
+    <p>All guest bookings across your properties.</p>
+  </div>
+</div>
+
+<form class="card toolbar" (submit)="$event.preventDefault()">
+  <label class="grow">
+    Status
+    <select [value]="status()" (change)="setStatus($any($event.target).value)">
+      <option value="">All statuses</option>
+      @for (s of statuses; track s) {
+        <option [value]="s" [selected]="s === status()">{{ s }}</option>
+      }
+    </select>
+  </label>
+  <button type="button" class="btn btn--ghost" [disabled]="!hasFilters()" (click)="clearFilters()">
+    Clear filters
+  </button>
+</form>
+
+<section class="card rows" [attr.aria-busy]="loading()" aria-label="Reservations list">
+  @if (error(); as err) {
+    <div class="state state--error" role="alert">
+      <h3>Something went wrong</h3>
+      <p>{{ err }}</p>
+      <button type="button" (click)="reload()">Try again</button>
+    </div>
+  } @else if (loading() && !data()) {
+    @for (i of [1, 2, 3, 4]; track i) {
+      <div class="skeleton"></div>
+    }
+  } @else if (data(); as d) {
+    @if (d.items.length === 0) {
+      <div class="state">
+        <h3>No reservations found</h3>
+        <p>{{ hasFilters() ? 'Try clearing the status filter.' : 'Bookings will appear here.' }}</p>
+      </div>
+    } @else {
+      <ul>
+        @for (r of d.items; track r.id) {
+          <li class="row" style="grid-template-columns: 1fr auto auto">
+            <div class="main">
+              <div class="title">{{ r.room.hotel_name }} — {{ r.room.name }}</div>
+              <div class="sub">
+                {{ r.confirmation_number }} · {{ r.check_in }} → {{ r.check_out }} · {{ r.nights }} nights ·
+                {{ r.guests }} guests
+              </div>
+            </div>
+            <strong>{{ r.total_amount | money }}</strong>
+            <span class="badge" [class]="'badge badge--' + tone(r.status)">{{ r.status }}</span>
+          </li>
+        }
+      </ul>
+
+      <div class="pager">
+        <span>Page {{ d.page }} of {{ d.total_pages || 1 }} · {{ d.total }} total</span>
+        <div>
+          <button type="button" class="btn btn--ghost" [disabled]="d.page <= 1 || loading()"
+            (click)="goTo(d.page - 1)">Previous</button>
+          <button type="button" class="btn btn--ghost" [disabled]="d.page >= d.total_pages || loading()"
+            (click)="goTo(d.page + 1)">Next</button>
+        </div>
+      </div>
+    }
+  }
+</section>

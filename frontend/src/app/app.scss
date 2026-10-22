@@ -1,0 +1,57 @@
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--brand);
+  color: #fff;
+
+  a {
+    color: #dbe7ff;
+    text-decoration: none;
+    margin-right: 1rem;
+
+    &.active {
+      color: #fff;
+      font-weight: 600;
+    }
+  }
+
+  .brand {
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.2rem;
+  }
+
+  nav {
+    flex: 1;
+  }
+
+  .user {
+    button {
+      background: #fff;
+      color: var(--brand);
+      border-color: #fff;
+
+      &:hover:not(:disabled) {
+        background: #e8f0ff;
+        border-color: #e8f0ff;
+      }
+    }
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+  }
+}
+
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem;
+
+  &.admin-host {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+}

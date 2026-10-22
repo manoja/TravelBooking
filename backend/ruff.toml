@@ -1,0 +1,10 @@
+target-version = "py312"
+line-length = 100
+extend-exclude = [".venv", "alembic/versions"]
+
+[lint]
+select = ["E", "F", "I", "B", "UP", "N"]
+ignore = ["B008", "N818", "UP042", "UP046"]
+
+[lint.per-file-ignores]
+"alembic/env.py" = ["E402"]

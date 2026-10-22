@@ -1,0 +1,190 @@
+<div class="page-head">
+  <div>
+    <h1>{{ config().plural }}</h1>
+    <p>{{ config().blurb }}</p>
+  </div>
+  <button type="button" class="btn" (click)="openCreate()">+ Add {{ config().singular }}</button>
+</div>
+
+<form class="card toolbar" role="search" (submit)="$event.preventDefault()">
+  @if (config().searchable) {
+    <label class="grow">
+      Search {{ config().plural.toLowerCase() }}
+      <input type="search" placeholder="Search by name…" [value]="searchText()"
+        (input)="onSearch($any($event.target).value)" />
+    </label>
+  }
+  @if (config().parentLabel; as parentLabel) {
+    <label [class.grow]="!config().searchable">
+      {{ parentLabel }}
+      <select [value]="parentFilter() ?? ''" (change)="setParent($any($event.target).value)">
+        <option value="">All</option>
+        @for (p of parents(); track p.id) {
+          <option [value]="p.id" [selected]="p.id === parentFilter()">{{ p.name }}</option>
+        }
+      </select>
+    </label>
+  }
+  <button type="button" class="btn btn--ghost" [disabled]="!hasFilters()" (click)="clearFilters()">
+    Clear filters
+  </button>
+</form>
+
+<section class="card rows" [attr.aria-busy]="loading()" [attr.aria-label]="config().plural + ' list'">
+  @if (error(); as err) {
+    <div class="state state--error" role="alert">
+      <h3>Something went wrong</h3>
+      <p>{{ err }}</p>
+      <button type="button" (click)="reload()">Try again</button>
+    </div>
+  } @else if (loading() && !data()) {
+    @for (i of [1, 2, 3, 4]; track i) {
+      <div class="skeleton"></div>
+    }
+  } @else if (data(); as d) {
+    @if (d.items.length === 0) {
+      <div class="state">
+        <h3>No {{ config().plural.toLowerCase() }} found</h3>
+        <p>
+          {{ hasFilters() ? 'Try changing or clearing your filters.' : 'Get started by adding your first ' + config().singular.toLowerCase() + '.' }}
+        </p>
+        @if (!hasFilters()) {
+          <button type="button" (click)="openCreate()">+ Add {{ config().singular }}</button>
+        }
+      </div>
+    } @else {
+      <ul>
+        @for (r of d.items; track r.id) {
+          <li class="row">
+            @if (thumb(r); as src) {
+              <img class="thumb" [src]="src" alt="" width="56" height="56" loading="lazy" (error)="markBroken(src)" />
+            } @else {
+              <span class="thumb" aria-hidden="true">{{ r.name.charAt(0).toUpperCase() }}</span>
+            }
+
+            <div class="main">
+              <div class="title">{{ r.name }}</div>
+              <div class="sub">{{ subtitle(r) }}</div>
+              @if (resource() === 'rooms') {
+                <div class="sub">{{ r.price_per_night | money }} / night</div>
+              }
+            </div>
+
+            <span class="badge-cell">
+              <span class="badge" [class.badge--success]="isLive(r)" [class.badge--warn]="!isLive(r)">
+                {{ liveLabel(r) }}
+              </span>
+            </span>
+
+            <div class="menu-wrap">
+              <button type="button" class="icon-btn" aria-haspopup="menu"
+                [attr.aria-expanded]="menuOpenId() === r.id"
+                [attr.aria-label]="'Actions for ' + r.name" (click)="toggleMenu(r.id, $event)">⋯</button>
+              @if (menuOpenId() === r.id) {
+                <div class="menu" role="menu" (click)="$event.stopPropagation()">
+                  <button type="button" role="menuitem" (click)="openEdit(r)">Edit</button>
+                  <button type="button" role="menuitem" (click)="toggleVisibility(r)">{{ toggleLabel(r) }}</button>
+                  <button type="button" role="menuitem" class="danger" (click)="remove(r)">Delete</button>
+                </div>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+
+      <div class="pager">
+        <span>Page {{ d.page }} of {{ d.total_pages || 1 }} · {{ d.total }} total</span>
+        <div>
+          <button type="button" class="btn btn--ghost" [disabled]="d.page <= 1 || loading()"
+            (click)="goTo(d.page - 1)">Previous</button>
+          <button type="button" class="btn btn--ghost" [disabled]="d.page >= d.total_pages || loading()"
+            (click)="goTo(d.page + 1)">Next</button>
+        </div>
+      </div>
+    }
+  }
+</section>
+
+<dialog #formDlg class="dlg" aria-labelledby="form-title">
+  <h2 id="form-title">{{ editing() ? 'Edit' : 'Add' }} {{ config().singular.toLowerCase() }}</h2>
+  <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <div class="form-grid">
+      @if (config().parentLabel; as parentLabel) {
+        <label class="full">
+          {{ parentLabel }}
+          <select formControlName="parent_id" [attr.aria-invalid]="!!fieldError('parent_id')">
+            <option [ngValue]="null">Select…</option>
+            @for (p of parents(); track p.id) {
+              <option [ngValue]="p.id">{{ p.name }}</option>
+            }
+          </select>
+          @if (fieldError('parent_id'); as e) { <span class="field-error">{{ e }}</span> }
+        </label>
+      }
+
+      <label class="full">
+        Name
+        <input formControlName="name" maxlength="200" [attr.aria-invalid]="!!fieldError('name')" />
+        @if (fieldError('name'); as e) { <span class="field-error">{{ e }}</span> }
+      </label>
+
+      @switch (resource()) {
+        @case ('destinations') {
+          <label class="full">
+            Slug (optional)
+            <input formControlName="slug" placeholder="paris" [attr.aria-invalid]="!!fieldError('slug')" />
+            @if (fieldError('slug'); as e) { <span class="field-error">{{ e }}</span> }
+          </label>
+          <label class="full">
+            Image URL (optional)
+            <input formControlName="image_url" type="url" placeholder="https://…" />
+            @if (fieldError('image_url'); as e) { <span class="field-error">{{ e }}</span> }
+          </label>
+          <label class="full">
+            Description (optional)
+            <textarea formControlName="description"></textarea>
+          </label>
+        }
+        @case ('hotels') {
+          <label class="full">
+            Address
+            <input formControlName="address" [attr.aria-invalid]="!!fieldError('address')" />
+            @if (fieldError('address'); as e) { <span class="field-error">{{ e }}</span> }
+          </label>
+          <label class="full">
+            Description (optional)
+            <textarea formControlName="description"></textarea>
+          </label>
+        }
+        @case ('rooms') {
+          <label>
+            Capacity
+            <input formControlName="capacity" type="number" min="1" max="20" />
+            @if (fieldError('capacity'); as e) { <span class="field-error">{{ e }}</span> }
+          </label>
+          <label>
+            Price per night (USD)
+            <input formControlName="price" type="number" min="0.01" step="0.01" />
+            @if (fieldError('price'); as e) { <span class="field-error">{{ e }}</span> }
+          </label>
+          <label class="full">
+            Amenities (comma separated)
+            <input formControlName="amenities" placeholder="wifi, pool, breakfast" />
+          </label>
+        }
+      }
+
+      <label class="full check">
+        <input type="checkbox" formControlName="is_visible" />
+        {{ resource() === 'rooms' ? 'Active (bookable)' : 'Visible to guests' }}
+      </label>
+    </div>
+
+    <div class="dlg-actions">
+      <button type="button" class="btn btn--ghost" (click)="closeDialog()">Cancel</button>
+      <button type="submit" class="btn" [disabled]="saving()">
+        {{ saving() ? 'Saving…' : editing() ? 'Save changes' : 'Create' }}
+      </button>
+    </div>
+  </form>
+</dialog>

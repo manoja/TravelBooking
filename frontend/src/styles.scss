@@ -1,0 +1,221 @@
+:root {
+  --brand: #2563eb;
+  --brand-dark: #1d4ed8;
+  --navy: #172c35;
+  --gold: #b69a64;
+  --ivory: #f6f4ef;
+  --border: #e4e0d6;
+  --text: #1f2a30;
+  --muted: #6b7780;
+  --danger: #b42318;
+  --success: #1f7a4d;
+  --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--text);
+  line-height: 1.5;
+  background: #fff;
+}
+
+a {
+  color: var(--brand);
+}
+
+button {
+  font: inherit;
+  background: var(--brand);
+  color: #fff;
+  border: 1px solid var(--brand);
+  border-radius: 8px;
+  padding: 0.5rem 0.95rem;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s;
+
+  &:hover:not(:disabled) {
+    background: var(--brand-dark);
+    border-color: var(--brand-dark);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &.outline {
+    background: #fff;
+    color: var(--brand);
+
+    &:hover:not(:disabled) {
+      background: #eff4ff;
+      border-color: var(--brand);
+    }
+  }
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid #cdd3da;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* ---- Public pages: shared premium look (matches the admin area) ---- */
+body {
+  background: var(--ivory);
+}
+
+h1,
+h2,
+h3 {
+  color: var(--navy);
+  letter-spacing: -0.01em;
+}
+
+.page-head {
+  margin-bottom: 1.5rem;
+
+  h1 {
+    margin: 0 0 0.25rem;
+    font-size: 1.85rem;
+  }
+
+  p {
+    margin: 0;
+    color: var(--muted);
+  }
+}
+
+.panel {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(23, 44, 53, 0.04), 0 8px 24px rgba(23, 44, 53, 0.05);
+  padding: 1.25rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--navy);
+
+  input,
+  select {
+    font-weight: 400;
+    border-color: var(--border);
+    min-height: 2.4rem;
+  }
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--brand);
+  outline: 2px solid rgba(37, 99, 235, 0.25);
+  outline-offset: 0;
+}
+
+.alert {
+  margin: 0 0 1rem;
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  background: #fef3f2;
+  border: 1px solid #fecdca;
+  color: var(--danger);
+
+  &.ok {
+    background: #ecfdf3;
+    border-color: #abefc6;
+    color: var(--success);
+  }
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  background: #eef0f2;
+  color: #475467;
+
+  &.confirmed,
+  &.completed,
+  &.paid {
+    background: #ecfdf3;
+    color: var(--success);
+  }
+
+  &.pending {
+    background: #fff6e0;
+    color: #8a6a12;
+  }
+
+  &.cancelled,
+  &.failed {
+    background: #fef3f2;
+    color: var(--danger);
+  }
+}
+
+.state {
+  text-align: center;
+  color: var(--muted);
+  padding: 2.5rem 1rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  background: var(--brand);
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+
+  &:hover {
+    background: var(--brand-dark);
+  }
+}
+
+.price {
+  color: var(--navy);
+  font-weight: 700;
+
+  small {
+    color: var(--muted);
+    font-weight: 400;
+  }
+}
+
+.hover-lift {
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: var(--gold);
+    box-shadow: 0 12px 28px rgba(23, 44, 53, 0.1);
+  }
+}
