@@ -1,5 +1,5 @@
 $navy: #172c35;
-$gold: #b69a64;
+$gold: hsl(40, 8%, 8%);
 $ivory: #f6f4ef;
 $border: #e6e2d8;
 $muted: #6b7780;
@@ -51,7 +51,7 @@ $side-w: 260px;
   .adm-side {
     width: $side-w;
     flex-shrink: 0;
-    background: $navy;
+    background: $brand;
     color: #d7e0e4;
     display: flex;
     flex-direction: column;
@@ -122,8 +122,10 @@ $side-w: 260px;
       color: $gold;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      font-size: 0.65rem;
+      font-size: 0.85rem;
+      font-weight: 600;
     }
+    
   }
 
   .adm-logo {
@@ -133,7 +135,7 @@ $side-w: 260px;
     place-items: center;
     border-radius: 12px;
     background: $gold;
-    color: $navy;
+    color: $brand;
     font-weight: 700;
     font-size: 1.2rem;
   }
@@ -261,7 +263,7 @@ $side-w: 260px;
     border-radius: 50%;
     display: grid;
     place-items: center;
-    background: $navy;
+    background: $brand;
     color: $gold;
     font-weight: 600;
     font-size: 0.8rem;
