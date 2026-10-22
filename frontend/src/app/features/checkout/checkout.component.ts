@@ -3,7 +3,7 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { catchError, of, switchMap } from 'rxjs';
-import { Payment, Reservation } from '../../core/models/api.models';
+import { Reservation } from '../../core/models/api.models';
 import { errorMessage } from '../../core/interceptors/error.interceptor';
 import { ApiService } from '../../core/services/api.service';
 import { MoneyPipe } from '../../shared/pipes/money.pipe';
@@ -43,8 +43,7 @@ import { MoneyPipe } from '../../shared/pipes/money.pipe';
             · Total <strong>{{ reservation()!.total_amount | money }}</strong></p>
           @if (reservation()!.status === 'pending') {
             <p class="note"><em>Development-only dummy payment. No real charge is made.</em></p>
-            <button type="button" (click)="pay('success')" [disabled]="busy()">Pay (simulate success)</button>
-            <button type="button" class="outline" (click)="pay('failure')" [disabled]="busy()">Simulate failure</button>
+            <a class="btn" [routerLink]="['/payment', reservation()!.id]">Proceed to payment</a>
           } @else {
             <a class="btn" routerLink="/reservations">View my reservations</a>
           }
@@ -131,24 +130,4 @@ export class CheckoutComponent {
       });
   }
 
-  protected pay(outcome: 'success' | 'failure'): void {
-    const r = this.reservation();
-    if (!r) return;
-    this.busy.set(true);
-    this.error.set(null);
-    this.api.payDummy(r.id, outcome).subscribe({
-      next: (p: Payment) => {
-        this.busy.set(false);
-        if (p.status === 'succeeded') {
-          void this.router.navigate(['/reservations']);
-        } else {
-          this.message.set('Payment failed. The reservation is still held; you can retry.');
-        }
-      },
-      error: (e) => {
-        this.error.set(errorMessage(e));
-        this.busy.set(false);
-      },
-    });
-  }
 }

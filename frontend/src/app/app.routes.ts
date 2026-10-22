@@ -25,6 +25,18 @@ export const routes: Routes = [
       import('./features/checkout/checkout.component').then((m) => m.CheckoutComponent),
   },
   {
+    path: 'payment/:reservationId',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/checkout/payment.component').then((m) => m.PaymentComponent),
+  },
+  {
+    path: 'payment-success/:reservationId',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/checkout/payment-success.component').then((m) => m.PaymentSuccessComponent),
+  },
+  {
     path: 'reservations',
     canActivate: [authGuard],
     loadComponent: () =>
