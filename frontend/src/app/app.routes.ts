@@ -47,5 +47,25 @@ export const routes: Routes = [
     canActivate: [adminGuard],
     loadChildren: () => import('./features/admin/admin.routes').then((m) => m.ADMIN_ROUTES),
   },
+  {
+    path: 'property-rules',
+    loadComponent: () =>
+      import('./features/policies/property-rules.component').then((m) => m.PropertyRulesComponent),
+  },
+  {
+    path: 'terms-conditions',
+    loadComponent: () =>
+      import('./features/policies/terms-conditions.component').then((m) => m.TermsConditionsComponent),
+  },
+  {
+    path: 'privacy-policy',
+    loadComponent: () =>
+      import('./features/policies/privacy-policy.component').then((m) => m.PrivacyPolicyComponent),
+  },
+  {
+    path: 'covid-safety',
+    loadComponent: () =>
+      import('./features/policies/covid-safety.component').then((m) => m.CovidSafetyComponent),
+  },
   { path: '**', redirectTo: 'destinations' },
 ];

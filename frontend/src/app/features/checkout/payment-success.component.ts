@@ -2,7 +2,7 @@ import { Component, inject, input, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { catchError, of, switchMap } from 'rxjs';
-import { Reservation } from '../../core/models/api.models';
+import { Reservation, HotelReviewSummary } from '../../core/models/api.models';
 import { ApiService } from '../../core/services/api.service';
 import { MoneyPipe } from '../../shared/pipes/money.pipe';
 import { CommonModule } from '@angular/common';
@@ -95,7 +95,9 @@ import { CommonModule } from '@angular/common';
                 <p class="room-location">
                   Hotel room in {{ res.room.destination_name }}
                 </p>
-                <p class="room-rating">★ 4.84 (125 reviews)</p>
+                @if (hotelReviewSummary(); as summary) {
+                  <p class="room-rating">★ {{ summary.average_rating }} ({{ summary.total_reviews }} review{{ summary.total_reviews !== 1 ? 's' : '' }})</p>
+                }
               </div>
             </section>
           </div>
@@ -377,6 +379,19 @@ export class PaymentSuccessComponent {
   protected readonly reservation = toSignal(
     toObservable(this.reservationId).pipe(
       switchMap((id) => this.api.reservation(Number(id)).pipe(catchError(() => of(null)))),
+    ),
+  );
+
+  protected readonly hotelReviewSummary = toSignal(
+    toObservable(this.reservation).pipe(
+      switchMap((res) => {
+        if (!res?.room?.hotel_id) {
+          return of(null);
+        }
+        return this.api.getHotelReviewsSummary(res.room.hotel_id).pipe(
+          catchError(() => of(null)),
+        );
+      }),
     ),
   );
 

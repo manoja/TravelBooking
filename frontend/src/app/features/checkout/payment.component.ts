@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-payment',
   standalone: true,
-  imports: [CommonModule, FormsModule, MoneyPipe],
+  imports: [CommonModule, FormsModule, MoneyPipe, RouterLink],
   template: `
     <header class="page-head">
       <a href="javascript:history.back()" class="back-link">← Back</a>
@@ -103,10 +103,10 @@ import { CommonModule } from '@angular/common';
 
           <p class="disclaimer">
             By selecting the button below, I agree to the
-            <a href="#" target="_blank">Property Rules</a>,
-            <a href="#" target="_blank">Terms and Conditions</a>,
-            <a href="#" target="_blank">Privacy Policy</a>
-            and <a href="#" target="_blank">COVID-19 Safety Requirements</a>.
+            <a routerLink="/property-rules" target="_blank">Property Rules</a>,
+            <a routerLink="/terms-conditions" target="_blank">Terms and Conditions</a>,
+            <a routerLink="/privacy-policy" target="_blank">Privacy Policy</a>
+            and <a routerLink="/covid-safety" target="_blank">COVID-19 Safety Requirements</a>.
           </p>
 
           <button
@@ -156,8 +156,7 @@ import { CommonModule } from '@angular/common';
               <span>{{ res.total_amount | money }}</span>
             </div>
             <p class="cancellation">
-              Free cancellation until 3:00 PM on {{ getCancellationDate(res.check_in) }}.
-              <a href="#">More info</a>
+              Free cancellation until 12:00 AM on {{ getCancellationDate(res.check_in) }}.
             </p>
           </section>
         </div>

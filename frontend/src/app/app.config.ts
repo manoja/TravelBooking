@@ -27,6 +27,8 @@ export const appConfig: ApplicationConfig = {
           { uri: `${environment.apiUrl}/payments/*`, allowAnonymous: false },
           { uri: `${environment.apiUrl}/saved-searches*`, allowAnonymous: false },
           { uri: `${environment.apiUrl}/admin/*`, allowAnonymous: false },
+          { uri: `${environment.apiUrl}/hotels/*/reviews*`, allowAnonymous: true },
+          { uri: `${environment.apiUrl}/hotels/reviews/*`, allowAnonymous: false },
         ],
       },
     }),
