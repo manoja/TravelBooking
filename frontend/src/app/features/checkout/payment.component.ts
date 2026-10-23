@@ -1,18 +1,19 @@
 import { Component, computed, inject, input, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { catchError, of, switchMap } from 'rxjs';
 import { Reservation } from '../../core/models/api.models';
 import { errorMessage } from '../../core/interceptors/error.interceptor';
 import { ApiService } from '../../core/services/api.service';
 import { MoneyPipe } from '../../shared/pipes/money.pipe';
 import { CommonModule } from '@angular/common';
+import { PolicyModalComponent, type PolicyType } from '../../shared/components/policy-modal.component';
 
 @Component({
   selector: 'app-payment',
   standalone: true,
-  imports: [CommonModule, FormsModule, MoneyPipe, RouterLink],
+  imports: [CommonModule, FormsModule, MoneyPipe, PolicyModalComponent],
   template: `
     <header class="page-head">
       <a href="javascript:history.back()" class="back-link">← Back</a>
@@ -47,7 +48,7 @@ import { CommonModule } from '@angular/common';
                 (click)="selectedMethod.set('card')"
                 class="method-btn"
               >
-                Credit Card
+                Credit Card/Debit Card
               </button>
               <button
                 type="button"
@@ -84,7 +85,7 @@ import { CommonModule } from '@angular/common';
                 <div class="card-row">
                   <input
                     type="text"
-                    placeholder="Expiration date"
+                    placeholder="Expiration date(MM/YY)"
                     [(ngModel)]="expiryDate"
                   />
                   <input
@@ -103,10 +104,10 @@ import { CommonModule } from '@angular/common';
 
           <p class="disclaimer">
             By selecting the button below, I agree to the
-            <a routerLink="/property-rules" target="_blank">Property Rules</a>,
-            <a routerLink="/terms-conditions" target="_blank">Terms and Conditions</a>,
-            <a routerLink="/privacy-policy" target="_blank">Privacy Policy</a>
-            and <a routerLink="/covid-safety" target="_blank">COVID-19 Safety Requirements</a>.
+            <button type="button" class="link-btn" (click)="openPolicy('property-rules')">Property Rules</button>,
+            <button type="button" class="link-btn" (click)="openPolicy('terms-conditions')">Terms and Conditions</button>,
+            <button type="button" class="link-btn" (click)="openPolicy('privacy-policy')">Privacy Policy</button>
+            and <button type="button" class="link-btn" (click)="openPolicy('covid-safety')">COVID-19 Safety Requirements</button>.
           </p>
 
           <button
@@ -164,6 +165,12 @@ import { CommonModule } from '@angular/common';
     } @else {
       <p class="state">Loading…</p>
     }
+
+    <app-policy-modal
+      [isOpen]="modalOpen()"
+      [policyType]="selectedPolicy()"
+      (closeModal)="modalOpen.set(false)"
+    />
   `,
   styles: `
     .back-link {
@@ -175,6 +182,25 @@ import { CommonModule } from '@angular/common';
 
       &:hover {
         text-decoration: underline;
+      }
+    }
+
+    .link-btn {
+      background: none;
+      border: none;
+      color: var(--brand);
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: inherit;
+      padding: 0;
+      font-weight: 500;
+
+      &:hover {
+        opacity: 0.8;
+      }
+
+      &:active {
+        opacity: 0.7;
       }
     }
 
@@ -410,12 +436,19 @@ export class PaymentComponent {
   protected readonly selectedMethod = signal<'card' | 'paypal' | 'google'>('card');
   protected readonly busy = signal(false);
   protected readonly error = signal<string | null>(null);
+  protected readonly modalOpen = signal(false);
+  protected readonly selectedPolicy = signal<PolicyType>('property-rules');
 
   protected cardNumber = '';
   protected cardHolder = '';
   protected expiryDate = '';
   protected cvv = '';
   protected saveCard = false;
+
+  protected openPolicy(policy: PolicyType): void {
+    this.selectedPolicy.set(policy);
+    this.modalOpen.set(true);
+  }
 
   protected formatDate(dateStr: string): string {
     const date = new Date(dateStr);
