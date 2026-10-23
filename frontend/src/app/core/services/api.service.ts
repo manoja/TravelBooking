@@ -5,6 +5,9 @@ import { environment } from '../../../environments/environment';
 import {
   Dashboard,
   Destination,
+  HotelReviewCreate,
+  HotelReviewWithSummary,
+  MyHotelReview,
   Page,
   Payment,
   Reservation,
@@ -166,5 +169,36 @@ export class ApiService {
 
   adminDashboard(): Observable<Dashboard> {
     return this.http.get<Dashboard>(`${this.base}/admin/dashboard`);
+  }
+
+  // Hotel Reviews
+  createHotelReview(hotelId: number, review: HotelReviewCreate): Observable<MyHotelReview> {
+    return this.http.post<MyHotelReview>(`${this.base}/hotels/${hotelId}/reviews`, review);
+  }
+
+  getHotelReviews(
+    hotelId: number,
+    limit: number = 10,
+    offset: number = 0,
+  ): Observable<HotelReviewWithSummary> {
+    return this.http.get<HotelReviewWithSummary>(`${this.base}/hotels/${hotelId}/reviews`, {
+      params: toParams({ limit, offset }),
+    });
+  }
+
+  getHotelReviewsSummary(hotelId: number): Observable<any> {
+    return this.http.get<any>(`${this.base}/hotels/${hotelId}/reviews/summary`);
+  }
+
+  getMyHotelReview(hotelId: number): Observable<MyHotelReview | null> {
+    return this.http.get<MyHotelReview | null>(`${this.base}/hotels/${hotelId}/my-review`);
+  }
+
+  updateMyHotelReview(reviewId: number, review: HotelReviewCreate): Observable<MyHotelReview> {
+    return this.http.put<MyHotelReview>(`${this.base}/hotels/reviews/${reviewId}`, review);
+  }
+
+  deleteMyHotelReview(reviewId: number): Observable<void> {
+    return this.http.delete<void>(`${this.base}/hotels/reviews/${reviewId}`);
   }
 }

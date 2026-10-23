@@ -8,6 +8,7 @@ from app.api.v1.endpoints import (
     hotels,
     payments,
     reservations,
+    reviews,
     rooms,
     saved_searches,
 )
@@ -21,6 +22,7 @@ for module in (
     rooms,
     reservations,
     payments,
+    reviews,
     saved_searches,
     admin,
 ):

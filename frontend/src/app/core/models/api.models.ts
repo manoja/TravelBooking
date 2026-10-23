@@ -114,3 +114,49 @@ export interface Dashboard {
   rooms_active: number;
   revenue_definition: string;
 }
+
+// Hotel Reviews
+export interface HotelReviewCreate {
+  rating: number;
+  title?: string;
+  review_text?: string;
+  cleanliness_rating?: number;
+  service_rating?: number;
+  location_rating?: number;
+  value_rating?: number;
+}
+
+export interface HotelReview {
+  id: number;
+  user_id: string;
+  rating: number;
+  title: string | null;
+  review_text: string | null;
+  cleanliness_rating: number | null;
+  service_rating: number | null;
+  location_rating: number | null;
+  value_rating: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MyHotelReview extends HotelReview {
+  reservation_id: number | null;
+  status: 'pending' | 'published' | 'rejected';
+}
+
+export interface HotelReviewSummary {
+  total_reviews: number;
+  average_rating: number;
+  average_cleanliness: number | null;
+  average_service: number | null;
+  average_location: number | null;
+  average_value: number | null;
+  rating_distribution: Record<number, number>;
+}
+
+export interface HotelReviewWithSummary {
+  summary: HotelReviewSummary;
+  reviews: HotelReview[];
+}
+

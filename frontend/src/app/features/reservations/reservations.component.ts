@@ -4,10 +4,13 @@ import { errorMessage } from '../../core/interceptors/error.interceptor';
 import { ApiService } from '../../core/services/api.service';
 import { MoneyPipe } from '../../shared/pipes/money.pipe';
 import { RouterLink } from '@angular/router';
+import { HotelReviewFormComponent } from '../../shared/components/hotel-review-form.component';
+import { ModalComponent } from '../../shared/components/modal.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-reservations',
-  imports: [MoneyPipe, RouterLink],
+  imports: [CommonModule, MoneyPipe, RouterLink, HotelReviewFormComponent, ModalComponent],
   template: `
     <header class="page-head">
       <h1>My reservations</h1>
@@ -25,6 +28,9 @@ import { RouterLink } from '@angular/router';
           <span class="badge" [class]="'badge ' + r.status">{{ r.status }}</span>
           @if (r.status === 'pending' || r.status === 'confirmed') {
             <button type="button" class="outline" (click)="cancel(r)">Cancel</button>
+          }
+          @if (r.status === 'confirmed') {
+            <button type="button" class="outline" (click)="openReviewModal(r)">Write Review</button>
           }
         </div>
       </article>
@@ -51,6 +57,20 @@ import { RouterLink } from '@angular/router';
     } @empty {
       <p class="state panel">No saved searches.</p>
     }
+
+    <!-- Review Modal -->
+    <app-modal 
+      [isOpen]="showReviewModal()" 
+      [title]="'Write a Review'"
+      (onClose)="closeReviewModal()"
+    >
+      @if (selectedReservation()) {
+        <app-hotel-review-form 
+          [hotelId]="selectedReservation()!.room.hotel_id"
+          (onCancel)="closeReviewModal()"
+        />
+      }
+    </app-modal>
   `,
   styles: `
     .res, .saved { display: flex; justify-content: space-between; align-items: center; gap: 1rem;
@@ -67,6 +87,8 @@ export class ReservationsComponent {
   protected readonly reservations = signal<Page<Reservation> | null>(null);
   protected readonly saved = signal<Page<SavedSearch> | null>(null);
   protected readonly error = signal<string | null>(null);
+  protected readonly showReviewModal = signal(false);
+  protected readonly selectedReservation = signal<Reservation | null>(null);
 
   constructor() {
     this.load(1);
@@ -86,6 +108,17 @@ export class ReservationsComponent {
       next: () => this.load(this.reservations()?.page ?? 1),
       error: (e) => this.error.set(errorMessage(e)),
     });
+  }
+
+  protected openReviewModal(reservation: Reservation): void {
+    this.selectedReservation.set(reservation);
+    this.showReviewModal.set(true);
+  }
+
+  protected closeReviewModal(): void {
+    this.showReviewModal.set(false);
+    this.selectedReservation.set(null);
+    this.load(this.reservations()?.page ?? 1);
   }
 
   protected runParams(s: SavedSearch): Record<string, string | number | string[] | null> {

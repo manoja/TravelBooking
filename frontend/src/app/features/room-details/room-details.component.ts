@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { catchError, of, switchMap } from 'rxjs';
 import { ApiService } from '../../core/services/api.service';
 import { ImageComponent } from '../../shared/components/image.component';
+import { HotelReviewSummaryComponent } from '../../shared/components/hotel-review-summary.component';
 import { MoneyPipe } from '../../shared/pipes/money.pipe';
 
 @Component({
   selector: 'app-room-details',
-  imports: [RouterLink, ImageComponent, MoneyPipe],
+  imports: [RouterLink, ImageComponent, HotelReviewSummaryComponent, MoneyPipe],
   template: `
     @if (room(); as r) {
       <header class="page-head">
@@ -33,7 +34,7 @@ import { MoneyPipe } from '../../shared/pipes/money.pipe';
         </aside>
       </div>
 
-      <!-- Non-critical content is deferred until it scrolls into view. -->
+      <!-- Gallery -->
       @defer (on viewport) {
         <h2 class="section">Gallery</h2>
         <div class="gallery">
@@ -49,6 +50,15 @@ import { MoneyPipe } from '../../shared/pipes/money.pipe';
         <div style="min-height: 140px">Gallery</div>
       } @loading {
         <p class="state">Loading gallery…</p>
+      }
+
+      <!-- Hotel Reviews -->
+      @defer (on viewport) {
+        <app-hotel-review-summary [hotelId]="r.hotel_id" />
+      } @placeholder {
+        <div style="min-height: 300px"></div>
+      } @loading {
+        <p class="state">Loading reviews…</p>
       }
     } @else if (failed()) {
       <p class="state panel">Room not found.</p>
